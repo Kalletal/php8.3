@@ -1,0 +1,23 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
+
+# Set proper ownership for runtime directories
+chown -R http:http /var/packages/php83/var/sessions
+chown -R http:http /var/packages/php83/var/tmp
+chmod 1733 /var/packages/php83/var/sessions
+chmod 1777 /var/packages/php83/var/tmp
+
+# Apply initial extension configuration
+"$SCRIPT_DIR/apply_extensions.sh"
+
+# Register service with pkgctl
+if [ -f /var/packages/php83/target/conf/pkgctl-php83.sc ]; then
+    cp /var/packages/php83/target/conf/pkgctl-php83.sc /var/packages/php83/conf/
+fi
+
+# Log installation completion
+logger -t php83 "Post-installation completed, extensions applied"
+
+exit 0

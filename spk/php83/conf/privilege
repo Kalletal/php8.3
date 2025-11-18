@@ -1,0 +1,1 @@
+{ "php83": { "description": "Manage PHP 8.3 extensions", "allow": ["system:administrators"] } }

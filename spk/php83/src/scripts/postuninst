@@ -1,0 +1,14 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+# Remove service configuration
+rm -f /var/packages/php83/conf/pkgctl-php83.sc
+
+# Clean up runtime directories but preserve logs and configuration
+rm -rf /var/packages/php83/var/run
+rm -rf /var/packages/php83/var/sessions
+rm -rf /var/packages/php83/var/tmp
+
+logger -t php83 "Post-uninstallation: cleanup completed (logs and config preserved)"
+
+exit 0

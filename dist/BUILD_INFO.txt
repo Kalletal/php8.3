@@ -1,0 +1,23 @@
+PHP 8.3 Synology Package Build
+==============================
+
+Package Name: php83
+Version: 8.3.8-0001
+Architecture: geminilake
+Build Date: 2025-11-18 16:49:16 UTC
+Build Host: compil-jle
+
+Files Generated:
+- php83_8.3.8-0001_geminilake.spk
+
+Build Notes:
+- This is a structure-only build
+- PHP binaries need to be compiled separately using spksrc toolchain
+- Extensions are managed via the included configuration scripts
+
+Next Steps:
+1. Cross-compile PHP 8.3.8 for Geminilake
+2. Re-run this script after placing binaries in spk/php83/files/bin/
+3. Test installation on DS920+ (or equivalent Geminilake device)
+
+For more information, see specs/001-extension-selection/quickstart.md

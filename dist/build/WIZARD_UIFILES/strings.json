@@ -1,0 +1,16 @@
+{
+  "en-us": {
+    "title": "PHP 8.3 Extension Selection",
+    "description": "Enable the extensions required by your workloads. Dependencies toggle automatically.",
+    "empty": "No extensions available for this platform.",
+    "continue": "Continue",
+    "back": "Back"
+  },
+  "fr-fr": {
+    "title": "Sélection des extensions PHP 8.3",
+    "description": "Activez les extensions nécessaires. Les dépendances sont appliquées automatiquement.",
+    "empty": "Aucune extension disponible pour cette plateforme.",
+    "continue": "Continuer",
+    "back": "Retour"
+  }
+}

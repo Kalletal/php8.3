@@ -1,0 +1,8 @@
+/var/log/php83-extension-selection.log {
+    rotate 7
+    weekly
+    compress
+    missingok
+    notifempty
+    copytruncate
+}

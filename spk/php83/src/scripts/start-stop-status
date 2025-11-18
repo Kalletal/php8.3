@@ -1,0 +1,21 @@
+#!/usr/bin/env bash
+set -euo pipefail
+CMD=${1:-status}
+case "$CMD" in
+    start)
+        synoservicectl --start pkgctl-php83
+        ;;
+    stop)
+        synoservicectl --stop pkgctl-php83
+        ;;
+    restart)
+        synoservicectl --restart pkgctl-php83
+        ;;
+    status)
+        synoservicectl --status pkgctl-php83
+        ;;
+    *)
+        echo "Usage: $0 {start|stop|restart|status}" >&2
+        exit 1
+        ;;
+esac

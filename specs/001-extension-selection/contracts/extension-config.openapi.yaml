@@ -1,0 +1,198 @@
+openapi: 3.0.3
+info:
+  title: PHP 8.3 Extension Selection API
+  version: 0.1.0
+  description: >
+    Local-only REST API exposed by the PHP 8.3 Synology package to list, validate,
+    and apply extension selections used by both the installer and DSM configuration panel.
+
+servers:
+  - url: https://127.0.0.1:8443/php83/extensions
+    description: Package-local endpoint proxied through DSM
+
+components:
+  schemas:
+    ExtensionOption:
+      type: object
+      required:
+        - id
+        - name
+        - description
+        - defaultEnabled
+        - dependencies
+        - conflicts
+        - compatible
+        - diskFootprintMb
+        - restartRequirement
+      properties:
+        id:
+          type: string
+          example: pdo_mysql
+        name:
+          type: string
+          example: PDO MySQL
+        description:
+          type: string
+          example: Database access layer for MySQL-compatible databases.
+        category:
+          type: string
+          example: database
+        defaultEnabled:
+          type: boolean
+        dependencies:
+          type: array
+          items:
+            type: string
+          example: [pdo]
+        conflicts:
+          type: array
+          items:
+            type: string
+        compatible:
+          type: boolean
+        diskFootprintMb:
+          type: number
+          format: float
+          example: 12.5
+        restartRequirement:
+          type: string
+          enum: [none, php-cli, php-fpm, both]
+        lastToggledAt:
+          type: string
+          format: date-time
+        warning:
+          type: string
+    ExtensionProfile:
+      type: object
+      required:
+        - selected
+        - appliedAt
+      properties:
+        selected:
+          type: array
+          items:
+            type: string
+        pending:
+          type: array
+          items:
+            $ref: '#/components/schemas/PendingChange'
+        appliedAt:
+          type: string
+          format: date-time
+        appliedBy:
+          type: string
+        restartActions:
+          type: array
+          items:
+            type: string
+        warnings:
+          type: array
+          items:
+            type: string
+    PendingChange:
+      type: object
+      required:
+        - id
+        - targetState
+      properties:
+        id:
+          type: string
+        targetState:
+          type: string
+          enum: [enable, disable]
+        requiresRestart:
+          type: boolean
+        note:
+          type: string
+    ApplyRequest:
+      type: object
+      required:
+        - operations
+      properties:
+        operations:
+          type: array
+          items:
+            $ref: '#/components/schemas/PendingChange'
+        dryRun:
+          type: boolean
+          description: If true, validates changes without applying.
+    ApplyResponse:
+      type: object
+      required:
+        - summary
+      properties:
+        summary:
+          type: string
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/ApplyResult'
+        restartQueued:
+          type: array
+          items:
+            type: string
+    ApplyResult:
+      type: object
+      required:
+        - id
+        - status
+      properties:
+        id:
+          type: string
+        status:
+          type: string
+          enum: [applied, skipped, failed]
+        message:
+          type: string
+        blockingDependency:
+          type: string
+
+paths:
+  /options:
+    get:
+      summary: List available PHP extensions and their metadata.
+      responses:
+        '200':
+          description: Extension manifest
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ExtensionOption'
+
+  /profile:
+    get:
+      summary: Get the current extension profile and pending changes.
+      responses:
+        '200':
+          description: Current profile snapshot
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExtensionProfile'
+
+  /apply:
+    patch:
+      summary: Validate and apply extension enable/disable requests.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ApplyRequest'
+      responses:
+        '200':
+          description: Apply results per extension
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApplyResponse'
+        '400':
+          description: Validation failure (dependency/conflict)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApplyResponse'
+        '507':
+          description: Insufficient disk space to enable requested extensions.

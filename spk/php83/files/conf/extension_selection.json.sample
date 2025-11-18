@@ -1,0 +1,15 @@
+{
+  "$schema": "https://example.local/php83/extension-selection.schema.json",
+  "profileId": "default",
+  "selected": ["core", "pdo", "openssl", "curl"],
+  "pending": [],
+  "appliedAt": null,
+  "appliedBy": null,
+  "restartActions": [],
+  "warnings": [],
+  "metadata": {
+    "version": "1.0",
+    "logFile": "/var/log/php83-extension-selection.log",
+    "notes": "Customize via DSM UI or install wizard. Audit events live in /var/log/php83-extension-selection.log."
+  }
+}

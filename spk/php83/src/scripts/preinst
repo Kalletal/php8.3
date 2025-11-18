@@ -1,0 +1,26 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+# Create necessary directories
+mkdir -p /var/packages/php83/conf
+mkdir -p /var/packages/php83/var/run
+mkdir -p /var/packages/php83/var/log
+mkdir -p /var/packages/php83/var/sessions
+mkdir -p /var/packages/php83/var/tmp
+
+# Handle extension selection from wizard
+PROFILE_PATH="/var/packages/php83/conf/extension_selection.json"
+
+if [ -n "${wizard_php83_extensions:-}" ]; then
+    echo "$wizard_php83_extensions" > "$PROFILE_PATH"
+else
+    # Copy default configuration if no wizard selection
+    if [ -f "/var/packages/php83/target/conf/extension_selection.json.sample" ]; then
+        cp /var/packages/php83/target/conf/extension_selection.json.sample "$PROFILE_PATH"
+    fi
+fi
+
+# Log installation
+logger -t php83 "Pre-installation completed"
+
+exit 0

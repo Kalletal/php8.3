@@ -1,0 +1,40 @@
+########################################################
+# COMMANDES À EXÉCUTER DIRECTEMENT SUR LE NAS
+# Copiez-collez ces commandes une par une dans votre terminal NAS
+########################################################
+
+echo "=== 1. Vérifier le lien symbolique target ==="
+ls -la /var/packages/php83/target
+
+echo ""
+echo "=== 2. Vérifier que PHP-FPM existe ==="
+ls -la /volume1/@appstore/php83/sbin/php-fpm
+
+echo ""
+echo "=== 3. Vérifier la configuration PHP-FPM ==="
+ls -la /volume1/@appstore/php83/conf/php-fpm.conf
+
+echo ""
+echo "=== 4. Tester PHP-FPM ==="
+/volume1/@appstore/php83/sbin/php-fpm --fpm-config /volume1/@appstore/php83/conf/php-fpm.conf --test
+
+echo ""
+echo "=== 5. Vérifier les répertoires var ==="
+ls -la /var/packages/php83/var/run
+ls -la /var/packages/php83/var/log
+
+echo ""
+echo "=== 6. Voir les logs de démarrage ==="
+cat /var/log/php83-startup.log 2>/dev/null || echo "Pas de log de démarrage"
+
+echo ""
+echo "=== 7. Tester le script start-stop-status ==="
+/var/packages/php83/scripts/start-stop-status start
+
+echo ""
+echo "=== 8. Vérifier les logs PHP-FPM ==="
+cat /var/packages/php83/var/log/php-fpm.log 2>/dev/null || echo "Pas de log PHP-FPM"
+
+echo ""
+echo "=== 9. Dernières lignes de synopkg.log ==="
+tail -20 /var/log/synopkg.log | grep php83

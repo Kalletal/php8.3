@@ -14,6 +14,6 @@ chmod 1733 /var/packages/php83/var/sessions
 chmod 1777 /var/packages/php83/var/tmp
 
 # Apply extension configuration
-/var/packages/php83/target/scripts/apply_extensions.sh
+/var/packages/php83/target/package/scripts/apply_extensions.sh
 
 exit 0

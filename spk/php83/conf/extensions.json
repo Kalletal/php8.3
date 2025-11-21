@@ -1,0 +1,280 @@
+{
+  "categories": {
+    "core": {
+      "name": "Core Extensions",
+      "description": "Essential PHP core functionality",
+      "extensions": {
+        "opcache": {
+          "name": "OPcache",
+          "description": "Bytecode cache for improved performance",
+          "required": true,
+          "enabled_by_default": true
+        },
+        "tokenizer": {
+          "name": "Tokenizer",
+          "description": "PHP tokenizer for parsing PHP code",
+          "required": false,
+          "enabled_by_default": true
+        },
+        "filter": {
+          "name": "Filter",
+          "description": "Input validation and filtering",
+          "required": false,
+          "enabled_by_default": true
+        },
+        "ctype": {
+          "name": "Ctype",
+          "description": "Character type checking functions",
+          "required": false,
+          "enabled_by_default": true
+        }
+      }
+    },
+    "math": {
+      "name": "Mathematics",
+      "description": "Mathematical and cryptographic extensions",
+      "extensions": {
+        "bcmath": {
+          "name": "BCMath",
+          "description": "Arbitrary precision mathematics",
+          "required": false,
+          "enabled_by_default": false
+        }
+      }
+    },
+    "xml": {
+      "name": "XML & Text Processing",
+      "description": "XML, DOM and text processing extensions",
+      "extensions": {
+        "xml": {
+          "name": "XML",
+          "description": "XML parser support",
+          "required": false,
+          "enabled_by_default": true
+        },
+        "dom": {
+          "name": "DOM",
+          "description": "Document Object Model",
+          "required": false,
+          "enabled_by_default": true
+        },
+        "simplexml": {
+          "name": "SimpleXML",
+          "description": "Simple XML parsing",
+          "required": false,
+          "enabled_by_default": true
+        },
+        "xmlreader": {
+          "name": "XMLReader",
+          "description": "XML Pull Parser",
+          "required": false,
+          "enabled_by_default": true
+        },
+        "xmlwriter": {
+          "name": "XMLWriter",
+          "description": "XML document generation",
+          "required": false,
+          "enabled_by_default": true
+        },
+        "soap": {
+          "name": "SOAP",
+          "description": "SOAP web services",
+          "required": false,
+          "enabled_by_default": false
+        }
+      }
+    },
+    "databases": {
+      "name": "Database Extensions",
+      "description": "Database connectivity extensions",
+      "extensions": {
+        "pdo": {
+          "name": "PDO",
+          "description": "PHP Data Objects (required for PDO drivers)",
+          "required": false,
+          "enabled_by_default": true
+        },
+        "mysqli": {
+          "name": "MySQLi",
+          "description": "MySQL improved extension",
+          "required": false,
+          "enabled_by_default": true
+        },
+        "mysqlnd": {
+          "name": "MySQL Native Driver",
+          "description": "MySQL native driver (required for mysqli)",
+          "required": false,
+          "enabled_by_default": true
+        },
+        "pdo_mysql": {
+          "name": "PDO MySQL",
+          "description": "PDO driver for MySQL",
+          "required": false,
+          "enabled_by_default": true
+        },
+        "sqlite3": {
+          "name": "SQLite3",
+          "description": "SQLite 3 database support",
+          "required": false,
+          "enabled_by_default": true
+        },
+        "pdo_sqlite": {
+          "name": "PDO SQLite",
+          "description": "PDO driver for SQLite",
+          "required": false,
+          "enabled_by_default": true
+        },
+        "dba": {
+          "name": "DBA",
+          "description": "Database abstraction layer",
+          "required": false,
+          "enabled_by_default": false
+        }
+      }
+    },
+    "network": {
+      "name": "Network & Protocols",
+      "description": "Network and protocol extensions",
+      "extensions": {
+        "curl": {
+          "name": "cURL",
+          "description": "Client URL library",
+          "required": false,
+          "enabled_by_default": true
+        },
+        "openssl": {
+          "name": "OpenSSL",
+          "description": "OpenSSL cryptographic functions",
+          "required": false,
+          "enabled_by_default": true
+        },
+        "ftp": {
+          "name": "FTP",
+          "description": "FTP client functions",
+          "required": false,
+          "enabled_by_default": false
+        },
+        "sockets": {
+          "name": "Sockets",
+          "description": "Low-level socket communication",
+          "required": false,
+          "enabled_by_default": false
+        }
+      }
+    },
+    "compression": {
+      "name": "Compression & Archives",
+      "description": "File compression and archive extensions",
+      "extensions": {
+        "zlib": {
+          "name": "Zlib",
+          "description": "Zlib compression",
+          "required": false,
+          "enabled_by_default": true
+        },
+        "phar": {
+          "name": "Phar",
+          "description": "PHP Archive support",
+          "required": false,
+          "enabled_by_default": true
+        }
+      }
+    },
+    "images": {
+      "name": "Image Processing",
+      "description": "Image manipulation extensions",
+      "extensions": {
+        "gd": {
+          "name": "GD",
+          "description": "Image processing (PNG, JPEG, WebP, FreeType)",
+          "required": false,
+          "enabled_by_default": true
+        },
+        "exif": {
+          "name": "EXIF",
+          "description": "Read EXIF headers from images",
+          "required": false,
+          "enabled_by_default": true
+        }
+      }
+    },
+    "io": {
+      "name": "File I/O & Sessions",
+      "description": "File handling and session extensions",
+      "extensions": {
+        "fileinfo": {
+          "name": "Fileinfo",
+          "description": "File information and MIME type detection",
+          "required": false,
+          "enabled_by_default": true
+        },
+        "session": {
+          "name": "Session",
+          "description": "Session management",
+          "required": false,
+          "enabled_by_default": true
+        }
+      }
+    },
+    "system": {
+      "name": "System & Process",
+      "description": "System and process control extensions",
+      "extensions": {
+        "posix": {
+          "name": "POSIX",
+          "description": "POSIX functions",
+          "required": false,
+          "enabled_by_default": true
+        },
+        "pcntl": {
+          "name": "PCNTL",
+          "description": "Process control support",
+          "required": false,
+          "enabled_by_default": false
+        },
+        "shmop": {
+          "name": "Shmop",
+          "description": "Shared memory operations",
+          "required": false,
+          "enabled_by_default": false
+        },
+        "sysvmsg": {
+          "name": "System V Messages",
+          "description": "System V message queue support",
+          "required": false,
+          "enabled_by_default": false
+        },
+        "sysvsem": {
+          "name": "System V Semaphores",
+          "description": "System V semaphore support",
+          "required": false,
+          "enabled_by_default": false
+        },
+        "sysvshm": {
+          "name": "System V Shared Memory",
+          "description": "System V shared memory support",
+          "required": false,
+          "enabled_by_default": false
+        }
+      }
+    },
+    "i18n": {
+      "name": "Internationalization",
+      "description": "Text encoding and internationalization",
+      "extensions": {
+        "gettext": {
+          "name": "Gettext",
+          "description": "GNU gettext internationalization",
+          "required": false,
+          "enabled_by_default": false
+        },
+        "calendar": {
+          "name": "Calendar",
+          "description": "Calendar conversion functions",
+          "required": false,
+          "enabled_by_default": false
+        }
+      }
+    }
+  }
+}

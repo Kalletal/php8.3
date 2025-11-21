@@ -1,21 +1,55 @@
-#!/usr/bin/env bash
-set -euo pipefail
-CMD=${1:-status}
-case "$CMD" in
+#!/bin/bash
+
+SYNOPKG_PKGDEST="/var/packages/php83/target"
+PHP_FPM="${SYNOPKG_PKGDEST}/package/sbin/php-fpm"
+PHP_FPM_CONF="${SYNOPKG_PKGDEST}/package/conf/php-fpm.conf"
+PHP_FPM_PID="/var/packages/php83/var/run/php-fpm.pid"
+
+start_daemon() {
+    if [ -f "$PHP_FPM_PID" ] && kill -0 $(cat "$PHP_FPM_PID") 2>/dev/null; then
+        echo "PHP-FPM already running"
+        return 0
+    fi
+
+    if [ ! -x "$PHP_FPM" ]; then
+        echo "PHP-FPM binary not found: $PHP_FPM"
+        return 1
+    fi
+
+    "$PHP_FPM" --fpm-config "$PHP_FPM_CONF" --pid "$PHP_FPM_PID"
+    return $?
+}
+
+stop_daemon() {
+    if [ -f "$PHP_FPM_PID" ]; then
+        kill $(cat "$PHP_FPM_PID") 2>/dev/null
+        rm -f "$PHP_FPM_PID"
+    fi
+    return 0
+}
+
+daemon_status() {
+    if [ -f "$PHP_FPM_PID" ] && kill -0 $(cat "$PHP_FPM_PID") 2>/dev/null; then
+        return 0
+    else
+        return 1
+    fi
+}
+
+case $1 in
     start)
-        synoservicectl --start pkgctl-php83
+        start_daemon
+        exit $?
         ;;
     stop)
-        synoservicectl --stop pkgctl-php83
-        ;;
-    restart)
-        synoservicectl --restart pkgctl-php83
+        stop_daemon
+        exit $?
         ;;
     status)
-        synoservicectl --status pkgctl-php83
+        daemon_status
+        exit $?
         ;;
     *)
-        echo "Usage: $0 {start|stop|restart|status}" >&2
         exit 1
         ;;
 esac

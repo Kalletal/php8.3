@@ -1,11 +1,3 @@
-#!/usr/bin/env bash
-set -euo pipefail
-
-# Stop service if running
-if [ -f /var/packages/php83/var/run/php-fpm.pid ]; then
-    synoservicectl --stop pkgctl-php83 || true
-fi
-
-logger -t php83 "Pre-uninstallation: service stopped"
-
+#!/bin/bash
+# preuninst script for php83
 exit 0

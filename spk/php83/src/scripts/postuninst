@@ -1,14 +1,15 @@
-#!/usr/bin/env bash
-set -euo pipefail
+#!/bin/bash
+# postuninst script for php83
 
-# Remove service configuration
-rm -f /var/packages/php83/conf/pkgctl-php83.sc
+# Unregister from Web Station
+rm -f /usr/syno/etc/www/app.d/php83.json
 
-# Clean up runtime directories but preserve logs and configuration
-rm -rf /var/packages/php83/var/run
-rm -rf /var/packages/php83/var/sessions
-rm -rf /var/packages/php83/var/tmp
+# Notify Web Station to reload configuration
+if command -v synowebservice >/dev/null 2>&1; then
+    synowebservice --reload-config 2>/dev/null || true
+fi
 
-logger -t php83 "Post-uninstallation: cleanup completed (logs and config preserved)"
+# Clean up runtime files
+rm -f /var/packages/php83/var/run/php-fpm.pid
 
 exit 0

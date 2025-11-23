@@ -1,0 +1,106 @@
+{
+  "extensions": [
+    {
+      "id": "bcmath",
+      "name": "bcmath",
+      "display_name": "BCMath",
+      "description": "Arbitrary Precision Mathematics"
+    },
+    {
+      "id": "calendar",
+      "name": "calendar",
+      "display_name": "Calendar",
+      "description": "Calendar conversion functions"
+    },
+    {
+      "id": "curl",
+      "name": "curl",
+      "display_name": "cURL",
+      "description": "Client URL Library"
+    },
+    {
+      "id": "exif",
+      "name": "exif",
+      "display_name": "EXIF",
+      "description": "Exchangeable image information"
+    },
+    {
+      "id": "ftp",
+      "name": "ftp",
+      "display_name": "FTP",
+      "description": "File Transfer Protocol"
+    },
+    {
+      "id": "gd",
+      "name": "gd",
+      "display_name": "GD",
+      "description": "Image Processing"
+    },
+    {
+      "id": "gettext",
+      "name": "gettext",
+      "display_name": "Gettext",
+      "description": "Internationalization"
+    },
+    {
+      "id": "mysqli",
+      "name": "mysqli",
+      "display_name": "MySQLi",
+      "description": "MySQL Improved Extension"
+    },
+    {
+      "id": "opcache",
+      "name": "opcache",
+      "display_name": "OPcache",
+      "description": "Opcode caching"
+    },
+    {
+      "id": "openssl",
+      "name": "openssl",
+      "display_name": "OpenSSL",
+      "description": "OpenSSL cryptographic functions"
+    },
+    {
+      "id": "pdo_mysql",
+      "name": "pdo_mysql",
+      "display_name": "PDO MySQL",
+      "description": "MySQL PDO driver"
+    },
+    {
+      "id": "pdo_sqlite",
+      "name": "pdo_sqlite",
+      "display_name": "PDO SQLite",
+      "description": "SQLite PDO driver"
+    },
+    {
+      "id": "posix",
+      "name": "posix",
+      "display_name": "POSIX",
+      "description": "POSIX functions"
+    },
+    {
+      "id": "soap",
+      "name": "soap",
+      "display_name": "SOAP",
+      "description": "SOAP protocol support"
+    },
+    {
+      "id": "sockets",
+      "name": "sockets",
+      "display_name": "Sockets",
+      "description": "Socket functions"
+    },
+    {
+      "id": "sqlite3",
+      "name": "sqlite3",
+      "display_name": "SQLite3",
+      "description": "SQLite database support"
+    },
+    {
+      "id": "zip",
+      "name": "zip",
+      "display_name": "ZIP",
+      "description": "ZIP archive support"
+    }
+  ]
+}

@@ -2,13 +2,13 @@ PHP 8.3 Synology Package Build
 ==============================
 
 Package Name: php83
-Version: 8.3.8-0001
+Version: 8.3.8-0012
 Architecture: geminilake
-Build Date: 2025-11-21 17:07:57 UTC
-Build Host: compil-jle
+Build Date: 2025-11-22 16:26:19 UTC
+Build Host: Jle-Gamerz
 
 Files Generated:
-- php83_8.3.8-0001_geminilake.spk
+- php83_8.3.8-0012_geminilake.spk
 
 Build Notes:
 - This is a structure-only build

@@ -1,0 +1,86 @@
+#!/bin/bash
+# postuninst script for php83 - Clean up Web Station registration
+
+# Log everything
+exec >> /var/log/php83-install.log 2>&1
+echo "[$(date)] === Starting postuninst ==="
+
+# Remove PHP 8.3 from PluginPackage.json
+PLUGIN_PKG_JSON="/usr/syno/etc/packages/WebStation/PluginPackage.json"
+
+if [ -f "$PLUGIN_PKG_JSON" ]; then
+    echo "[$(date)] Removing PHP 8.3 from PluginPackage.json..."
+
+    # Create backup
+    cp "$PLUGIN_PKG_JSON" "${PLUGIN_PKG_JSON}.backup.$(date +%Y%m%d-%H%M%S)"
+
+    # Use Python to remove php83 entry
+    python3 << 'PYTHON_SCRIPT'
+import json
+import sys
+
+plugin_file = "/usr/syno/etc/packages/WebStation/PluginPackage.json"
+
+try:
+    with open(plugin_file, 'r') as f:
+        plugin_data = json.load(f)
+
+    # Remove php83 package
+    original_count = len(plugin_data.get("packages", []))
+    plugin_data["packages"] = [pkg for pkg in plugin_data.get("packages", []) if pkg.get("id") != "php83"]
+    new_count = len(plugin_data["packages"])
+
+    if original_count != new_count:
+        with open(plugin_file, 'w') as f:
+            json.dump(plugin_data, f, indent="\t")
+        print(f"[PluginPackage] PHP 8.3 removed (packages: {original_count} -> {new_count})")
+        sys.exit(0)
+    else:
+        print("[PluginPackage] PHP 8.3 was not registered")
+        sys.exit(0)
+
+except Exception as e:
+    print(f"[PluginPackage] Error: {e}")
+    sys.exit(1)
+PYTHON_SCRIPT
+
+    if [ $? -eq 0 ]; then
+        echo "[$(date)] PluginPackage.json cleaned up successfully"
+    else
+        echo "[$(date)] WARNING: Failed to clean up PluginPackage.json"
+    fi
+else
+    echo "[$(date)] PluginPackage.json not found, skipping cleanup"
+fi
+
+# Remove from app.d (both old and new names for safety)
+echo "[$(date)] Removing backend files..."
+rm -f /usr/syno/etc/www/app.d/php83.json
+rm -f /usr/syno/etc/www/app.d/backend-php83.json
+
+# Remove from WebStation backends if it exists
+if [ -f "/usr/syno/etc/packages/WebStation/backends/backend-php83.json" ]; then
+    rm -f /usr/syno/etc/packages/WebStation/backends/backend-php83.json
+    echo "[$(date)] Removed from WebStation backends"
+fi
+
+# Reload Web Station configuration
+echo "[$(date)] Reloading Web Station..."
+if command -v systemctl >/dev/null 2>&1; then
+    systemctl reload nginx 2>&1 || true
+elif command -v synoservicectl >/dev/null 2>&1; then
+    synoservicectl --reload nginx 2>&1 || true
+fi
+
+if command -v synowebservice >/dev/null 2>&1; then
+    synowebservice --reload-config 2>&1 || true
+fi
+
+# Clean up runtime files
+echo "[$(date)] Cleaning up runtime files..."
+rm -f /var/packages/php83/var/run/php-fpm.pid
+
+echo "[$(date)] Cleanup completed"
+echo "[$(date)] === Ending postuninst ==="
+
+exit 0

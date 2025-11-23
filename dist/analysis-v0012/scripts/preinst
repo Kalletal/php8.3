@@ -1,0 +1,3 @@
+#!/bin/bash
+# preinst script for php83
+exit 0

@@ -1,0 +1,42 @@
+#!/bin/bash
+# postuninst script for php83 - Clean up Web Station registration
+
+# Log everything
+exec >> /var/log/php83-install.log 2>&1
+echo "[$(date)] === Starting postuninst ==="
+
+# Package Worker handles PluginPackage.json cleanup automatically
+# We only need to clean up backend files manually
+echo "[$(date)] Cleaning up Web Station backend files..."
+
+# Remove from app.d (both old and new names for safety)
+echo "[$(date)] Removing backend files..."
+rm -f /usr/syno/etc/www/app.d/php83.json
+rm -f /usr/syno/etc/www/app.d/backend-php83.json
+
+# Remove from WebStation backends if it exists
+if [ -f "/usr/syno/etc/packages/WebStation/backends/backend-php83.json" ]; then
+    rm -f /usr/syno/etc/packages/WebStation/backends/backend-php83.json
+    echo "[$(date)] Removed from WebStation backends"
+fi
+
+# Reload Web Station configuration
+echo "[$(date)] Reloading Web Station..."
+if command -v systemctl >/dev/null 2>&1; then
+    systemctl reload nginx 2>&1 || true
+elif command -v synoservicectl >/dev/null 2>&1; then
+    synoservicectl --reload nginx 2>&1 || true
+fi
+
+if command -v synowebservice >/dev/null 2>&1; then
+    synowebservice --reload-config 2>&1 || true
+fi
+
+# Clean up runtime files
+echo "[$(date)] Cleaning up runtime files..."
+rm -f /var/packages/php83/var/run/php-fpm.pid
+
+echo "[$(date)] Cleanup completed"
+echo "[$(date)] === Ending postuninst ==="
+
+exit 0

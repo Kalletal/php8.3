@@ -1,0 +1,37 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(tar:*)",
+      "Bash(bash:*)",
+      "Bash(ssh:*)",
+      "Bash(echo:*)",
+      "Bash(scp:*)",
+      "Bash(cat:*)",
+      "Bash(ssh-add:*)",
+      "WebSearch",
+      "WebFetch(domain:help.synology.com)",
+      "Bash(./scripts/build-spk.sh:*)",
+      "Bash(C:/Users/gdalm/ProjetsSPK/php8.3/dist/php83_8.3.8-0010_geminilake.spk)",
+      "Bash(php83_8.3.8-0010_geminilake.spk.md5)",
+      "Bash(C:/Users/gdalm/ProjetsSPK/php8.3/dist/php83_8.3.8-0011_geminilake.spk)",
+      "Bash(php83_8.3.8-0011_geminilake.spk.md5)",
+      "Bash(md5sum:*)",
+      "Bash(php83_8.3.8-0012_geminilake.spk.md5)",
+      "Bash(\"C:/Users/gdalm/ProjetsSPK/php8.3/dist/php83_8.3.8-0013_geminilake.spk\")",
+      "Bash(\"C:/Users/gdalm/ProjetsSPK/php8.3/dist/php83_8.3.8-0013_geminilake.spk.md5\")",
+      "Bash(\"C:/Users/gdalm/ProjetsSPK/php8.3/dist/php83_8.3.8-0014_geminilake.spk\")",
+      "Bash(\"C:/Users/gdalm/ProjetsSPK/php8.3/dist/php83_8.3.8-0014_geminilake.spk.md5\")",
+      "Bash(\"C:/Users/gdalm/ProjetsSPK/php8.3/dist/php83_8.3.8-0016_geminilake.spk\")",
+      "Bash(\"C:/Users/gdalm/ProjetsSPK/php8.3/dist/php83_8.3.8-0016_geminilake.spk.md5\")",
+      "Bash(\"C:/Users/gdalm/ProjetsSPK/php8.3/dist/php83_8.3.8-0017_geminilake.spk\")",
+      "Bash(\"C:/Users/gdalm/ProjetsSPK/php8.3/dist/php83_8.3.8-0017_geminilake.spk.md5\")",
+      "WebFetch(domain:global.download.synology.com)",
+      "Bash(\"C:/Users/gdalm/ProjetsSPK/php8.3/dist/php83_8.3.8-0018_geminilake.spk\")",
+      "Bash(\"C:/Users/gdalm/ProjetsSPK/php8.3/dist/php83_8.3.8-0018_geminilake.spk.md5\")",
+      "Bash(git fetch:*)",
+      "Bash(git add:*)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}

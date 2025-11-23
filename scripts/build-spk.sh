@@ -15,7 +15,7 @@ OUTPUT_DIR="$PROJECT_ROOT/dist"
 # Package metadata
 PKG_NAME="php83"
 PKG_VERSION="8.3.8"
-PKG_BUILD="0001"
+PKG_BUILD="0012"
 PKG_ARCH="geminilake"
 PKG_FULL_VERSION="${PKG_VERSION}-${PKG_BUILD}"
 
@@ -75,6 +75,20 @@ copy_files() {
     cp "$SPK_DIR/conf/backend.json" "$BUILD_DIR/package/conf/" 2>/dev/null || true
     cp "$SPK_DIR/conf/extensions.json" "$BUILD_DIR/package/conf/" 2>/dev/null || true
     cp "$SPK_DIR/conf/resource.conf" "$BUILD_DIR/package/conf/" 2>/dev/null || true
+
+    # Copy Web Station backend configuration file to package root (becomes /var/packages/php83/target/)
+    # According to Synology docs, *.json files in target/ are auto-copied to /usr/syno/etc/www/app.d/
+    if [ -f "$SPK_DIR/src/package/backend-php83.json" ]; then
+        cp "$SPK_DIR/src/package/backend-php83.json" "$BUILD_DIR/package/"
+        log_info "Copied backend-php83.json for Web Station integration"
+    fi
+
+    # Copy Package Worker PHP resource file to package root
+    # This will be synced by Package Worker to PluginPackage.json automatically
+    if [ -f "$SPK_DIR/src/package/PKG_PHP.json" ]; then
+        cp "$SPK_DIR/src/package/PKG_PHP.json" "$BUILD_DIR/package/"
+        log_info "Copied PKG_PHP.json for Package Worker auto-registration"
+    fi
 
     # Copy scripts
     cp "$SPK_DIR/src/scripts/"*.sh "$BUILD_DIR/package/scripts/" 2>/dev/null || true
@@ -145,6 +159,17 @@ copy_files() {
 
     # Copy resource config if exists
     cp "$SPK_DIR/conf/resource.conf" "$BUILD_DIR/conf/" 2>/dev/null || true
+
+    # Copy default settings and extension list for Web Station
+    if [ -f "$SPK_DIR/conf/default_settings.json" ]; then
+        cp "$SPK_DIR/conf/default_settings.json" "$BUILD_DIR/package/conf/"
+        log_info "Copied default_settings.json"
+    fi
+
+    if [ -f "$SPK_DIR/conf/extension_list.json" ]; then
+        cp "$SPK_DIR/conf/extension_list.json" "$BUILD_DIR/package/conf/"
+        log_info "Copied extension_list.json"
+    fi
 }
 
 # Bundle compiled PHP binaries
@@ -160,7 +185,12 @@ bundle_php() {
 
     # Copy all PHP files (binaries, libraries, extensions)
     log_info "Copying PHP binaries, libraries, and extensions..."
-    rsync -av "$SPK_DIR/files/php/" "$BUILD_DIR/package/" | tail -20
+    if command -v rsync >/dev/null 2>&1; then
+        rsync -av "$SPK_DIR/files/php/" "$BUILD_DIR/package/" | tail -20
+    else
+        # Use cp -a to preserve symlinks, permissions, and timestamps
+        cp -a "$SPK_DIR/files/php/"* "$BUILD_DIR/package/"
+    fi
 
     # Verify critical files
     if [ ! -f "$BUILD_DIR/package/bin/php" ]; then
@@ -332,22 +362,20 @@ create_spk() {
 
     # SPK is a tar archive with specific order (DSM 7.x format):
     # 1. INFO (MUST BE FIRST!)
-    # 2. PACKAGE_ICON files
-    # 3. scripts/ (individual files, not tarball)
-    # 4. conf/ (with privilege, resource.conf, etc.)
-    # 5. WIZARD_UIFILES/ (directory with install_uifile)
-    # 6. package.tgz (MUST BE LAST!)
+    # 2. WIZARD_UIFILES/ (directory with install_uifile)
+    # 3. conf/ (with privilege, resource.conf, etc.)
+    # 4. package.tgz (package contents)
+    # 5. scripts/ (MUST BE AFTER package.tgz for proper extraction order!)
+    # Note: PACKAGE_ICON files can be omitted if included in package.tgz
 
     # Create tar with POSIX ustar format (not GNU)
     # Note: ui/ is inside package.tgz, not at SPK root level
     tar --format=ustar -cf "$OUTPUT_DIR/$SPK_NAME" \
         INFO \
-        $([ -f PACKAGE_ICON.PNG ] && echo "PACKAGE_ICON.PNG") \
-        $([ -f PACKAGE_ICON_256.PNG ] && echo "PACKAGE_ICON_256.PNG") \
-        $([ -d scripts ] && echo "scripts") \
-        $([ -d conf ] && echo "conf") \
         $([ -d WIZARD_UIFILES ] && echo "WIZARD_UIFILES") \
-        package.tgz
+        $([ -d conf ] && echo "conf") \
+        package.tgz \
+        $([ -d scripts ] && echo "scripts")
 
     SPK_SIZE=$(stat -c%s "$OUTPUT_DIR/$SPK_NAME")
     SPK_MD5=$(md5sum "$OUTPUT_DIR/$SPK_NAME" | cut -d' ' -f1)

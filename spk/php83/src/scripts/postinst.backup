@@ -1,0 +1,61 @@
+#!/bin/bash
+# postinst script for php83
+
+# Log everything for debugging
+exec >> /var/log/php83-install.log 2>&1
+echo "[$(date)] === Starting postinst ==="
+
+SYNOPKG_PKGNAME="php83"
+SYNOPKG_PKGDEST="/var/packages/${SYNOPKG_PKGNAME}/target"
+
+echo "[$(date)] SYNOPKG_PKGDEST: ${SYNOPKG_PKGDEST}"
+
+# Create necessary directories
+mkdir -p /var/packages/php83/var/sessions
+mkdir -p /var/packages/php83/var/tmp
+mkdir -p /var/packages/php83/var/log
+mkdir -p /var/packages/php83/var/run
+
+# Set permissions
+chmod 1733 /var/packages/php83/var/sessions
+chmod 1777 /var/packages/php83/var/tmp
+chmod 755 /var/packages/php83/var/log
+chmod 755 /var/packages/php83/var/run
+
+# Set ownership to http user
+chown -R http:http /var/packages/php83/var
+
+echo "[$(date)] Directories and permissions set"
+
+# Register with Web Station
+BACKEND_JSON="${SYNOPKG_PKGDEST}/package/conf/backend.json"
+echo "[$(date)] Looking for backend.json at: ${BACKEND_JSON}"
+
+if [ -f "${BACKEND_JSON}" ]; then
+    echo "[$(date)] backend.json found, copying to Web Station"
+    mkdir -p /usr/syno/etc/www/app.d
+    cp -f "${BACKEND_JSON}" /usr/syno/etc/www/app.d/php83.json
+    chmod 644 /usr/syno/etc/www/app.d/php83.json
+
+    echo "[$(date)] backend.json copied to /usr/syno/etc/www/app.d/php83.json"
+    ls -la /usr/syno/etc/www/app.d/php83.json
+
+    # Notify Web Station to reload configuration
+    if command -v synowebservice >/dev/null 2>&1; then
+        echo "[$(date)] Notifying Web Station to reload config"
+        synowebservice --reload-config 2>&1 || echo "[$(date)] synowebservice command failed"
+    else
+        echo "[$(date)] synowebservice command not found"
+    fi
+
+    echo "[$(date)] Web Station backend registered"
+else
+    echo "[$(date)] ERROR: backend.json not found at ${BACKEND_JSON}"
+    echo "[$(date)] Contents of ${SYNOPKG_PKGDEST}/package/conf/:"
+    ls -la "${SYNOPKG_PKGDEST}/package/conf/" || echo "Directory does not exist"
+fi
+
+echo "[$(date)] PHP 8.3 installation completed"
+echo "[$(date)] === Ending postinst ==="
+
+exit 0

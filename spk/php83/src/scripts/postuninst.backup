@@ -1,0 +1,15 @@
+#!/bin/bash
+# postuninst script for php83
+
+# Unregister from Web Station
+rm -f /usr/syno/etc/www/app.d/php83.json
+
+# Notify Web Station to reload configuration
+if command -v synowebservice >/dev/null 2>&1; then
+    synowebservice --reload-config 2>/dev/null || true
+fi
+
+# Clean up runtime files
+rm -f /var/packages/php83/var/run/php-fpm.pid
+
+exit 0

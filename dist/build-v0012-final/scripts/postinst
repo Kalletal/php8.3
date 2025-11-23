@@ -1,0 +1,156 @@
+#!/bin/bash
+# postinst script for php83
+
+# Log everything for debugging
+exec >> /var/log/php83-install.log 2>&1
+echo "[$(date)] === Starting postinst ==="
+
+SYNOPKG_PKGNAME="php83"
+SYNOPKG_PKGDEST="/var/packages/${SYNOPKG_PKGNAME}/target"
+
+echo "[$(date)] SYNOPKG_PKGDEST: ${SYNOPKG_PKGDEST}"
+
+# Create necessary directories
+mkdir -p /var/packages/php83/var/sessions
+mkdir -p /var/packages/php83/var/tmp
+mkdir -p /var/packages/php83/var/log
+mkdir -p /var/packages/php83/var/run
+
+# Set permissions
+chmod 1733 /var/packages/php83/var/sessions
+chmod 1777 /var/packages/php83/var/tmp
+chmod 755 /var/packages/php83/var/log
+chmod 755 /var/packages/php83/var/run
+
+# Set ownership to http user
+chown -R http:http /var/packages/php83/var
+
+echo "[$(date)] Directories and permissions set"
+
+# Fix binary permissions (needed when building on Windows/Git Bash where execute bits may not be preserved)
+echo "[$(date)] Fixing binary permissions..."
+chmod 755 "${SYNOPKG_PKGDEST}"/package/bin/* 2>/dev/null || true
+chmod 755 "${SYNOPKG_PKGDEST}"/package/sbin/* 2>/dev/null || true
+find "${SYNOPKG_PKGDEST}/package/lib" -name "*.so*" -exec chmod 755 {} \; 2>/dev/null || true
+echo "[$(date)] Binary permissions fixed"
+
+# Register with Web Station - place backend-php83.json in target directory
+# According to Synology docs, JSON files in target/ are auto-copied to /usr/syno/etc/www/app.d/
+BACKEND_JSON="${SYNOPKG_PKGDEST}/backend-php83.json"
+echo "[$(date)] Looking for backend-php83.json at: ${BACKEND_JSON}"
+
+if [ -f "${BACKEND_JSON}" ]; then
+    echo "[$(date)] backend-php83.json found in target, Web Station should auto-detect it"
+    ls -la "${BACKEND_JSON}"
+
+    # Manually copy to ensure it's in the right place
+    mkdir -p /usr/syno/etc/www/app.d
+    cp -f "${BACKEND_JSON}" /usr/syno/etc/www/app.d/backend-php83.json
+    chmod 644 /usr/syno/etc/www/app.d/backend-php83.json
+    echo "[$(date)] Copied to /usr/syno/etc/www/app.d/backend-php83.json"
+    ls -la /usr/syno/etc/www/app.d/backend-php83.json
+
+    # Reload Web Station configuration using systemctl (DSM 7.x uses systemctl)
+    if command -v systemctl >/dev/null 2>&1; then
+        echo "[$(date)] Reloading nginx with systemctl"
+        systemctl reload nginx 2>&1 || true
+    elif command -v synoservicectl >/dev/null 2>&1; then
+        echo "[$(date)] Reloading nginx with synoservicectl (legacy)"
+        synoservicectl --reload nginx 2>&1 || true
+    fi
+
+    # Try synowebservice as alternative
+    if command -v synowebservice >/dev/null 2>&1; then
+        echo "[$(date)] Notifying Web Station to reload config"
+        synowebservice --reload-config 2>&1 || true
+    fi
+
+    echo "[$(date)] Web Station backend registered"
+else
+    echo "[$(date)] ERROR: backend-php83.json not found at ${BACKEND_JSON}"
+    echo "[$(date)] Contents of ${SYNOPKG_PKGDEST}:"
+    ls -la "${SYNOPKG_PKGDEST}/" || echo "Directory does not exist"
+fi
+
+# Register PHP 8.3 in PluginPackage.json for Web Station profile creation
+echo "[$(date)] Registering PHP 8.3 in PluginPackage.json..."
+PLUGIN_PKG_JSON="/usr/syno/etc/packages/WebStation/PluginPackage.json"
+
+if [ -f "$PLUGIN_PKG_JSON" ]; then
+    # Create backup
+    cp "$PLUGIN_PKG_JSON" "${PLUGIN_PKG_JSON}.backup.$(date +%Y%m%d-%H%M%S)"
+    echo "[$(date)] Backup created"
+
+    # Use Python to update JSON
+    python3 << 'PYTHON_SCRIPT'
+import json
+import sys
+
+plugin_file = "/usr/syno/etc/packages/WebStation/PluginPackage.json"
+
+try:
+    with open(plugin_file, 'r') as f:
+        plugin_data = json.load(f)
+
+    # Check if php83 already exists
+    php83_exists = False
+    for pkg in plugin_data.get("packages", []):
+        if pkg.get("id") == "php83":
+            php83_exists = True
+            break
+
+    if not php83_exists:
+        new_package = {
+            "id": "php83",
+            "resource": {
+                "id": 83,
+                "prefix": "php83",
+                "version": 1,
+                "fpm_path": "/var/packages/php83/target/package/sbin/php-fpm",
+                "cgi_path": "/var/packages/php83/target/package/bin/php-cgi",
+                "fpm_syslog_ident": "php83-fpm",
+                "service_template_unit": "pkg-WebStation-php83@",
+                "default_ini": "/var/packages/php83/target/package/etc/php.ini",
+                "default_settings": "/var/packages/php83/target/package/conf/default_settings.json",
+                "extension_list_path": "/var/packages/php83/target/package/conf/extension_list.json"
+            },
+            "type": 1,
+            "version": "8.3.8-0012"
+        }
+
+        plugin_data["packages"].append(new_package)
+
+        with open(plugin_file, 'w') as f:
+            json.dump(plugin_data, f, indent="\t")
+
+        print("[PluginPackage] PHP 8.3 registered successfully")
+        sys.exit(0)
+    else:
+        print("[PluginPackage] PHP 8.3 already registered")
+        sys.exit(0)
+
+except Exception as e:
+    print(f"[PluginPackage] Error: {e}")
+    sys.exit(1)
+PYTHON_SCRIPT
+
+    if [ $? -eq 0 ]; then
+        echo "[$(date)] PluginPackage.json updated successfully"
+
+        # Reload nginx to apply changes
+        if command -v systemctl >/dev/null 2>&1; then
+            echo "[$(date)] Reloading nginx after PluginPackage registration"
+            systemctl restart nginx 2>&1 || true
+            sleep 2
+        fi
+    else
+        echo "[$(date)] WARNING: Failed to update PluginPackage.json"
+    fi
+else
+    echo "[$(date)] WARNING: PluginPackage.json not found at $PLUGIN_PKG_JSON"
+fi
+
+echo "[$(date)] PHP 8.3 installation completed"
+echo "[$(date)] === Ending postinst ==="
+
+exit 0

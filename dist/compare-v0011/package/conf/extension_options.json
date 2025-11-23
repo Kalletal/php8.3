@@ -1,0 +1,50 @@
+[
+  {
+    "id": "curl",
+    "name": "cURL",
+    "description": "HTTP client bindings",
+    "category": "networking",
+    "defaultEnabled": true,
+    "dependencies": ["openssl"],
+    "conflicts": [],
+    "compatible": true,
+    "diskFootprintMb": 5,
+    "restartRequirement": "php-fpm"
+  },
+  {
+    "id": "openssl",
+    "name": "OpenSSL",
+    "description": "TLS support",
+    "category": "security",
+    "defaultEnabled": true,
+    "dependencies": [],
+    "conflicts": [],
+    "compatible": true,
+    "diskFootprintMb": 3,
+    "restartRequirement": "php-fpm"
+  },
+  {
+    "id": "pdo_mysql",
+    "name": "PDO MySQL",
+    "description": "Database abstraction layer",
+    "category": "database",
+    "defaultEnabled": false,
+    "dependencies": ["pdo"],
+    "conflicts": ["mysqli"],
+    "compatible": true,
+    "diskFootprintMb": 7,
+    "restartRequirement": "php-fpm"
+  },
+  {
+    "id": "pdo",
+    "name": "PDO Core",
+    "description": "Shared database objects",
+    "category": "database",
+    "defaultEnabled": true,
+    "dependencies": [],
+    "conflicts": [],
+    "compatible": true,
+    "diskFootprintMb": 2,
+    "restartRequirement": "php-fpm"
+  }
+]

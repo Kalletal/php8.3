@@ -1,0 +1,29 @@
+[Unit]
+Description=WebStation PHP 8.3 fpm process
+After=pkgctl-php83.service pkgctl-WebStation.service
+PartOf=pkgctl-php83.service pkgctl-WebStation.service
+ConditionPathExists=/var/packages/WebStation/enabled
+ConditionPathExists=/var/packages/php83/enabled
+IgnoreOnIsolate=true
+DefaultDependencies=no
+
+[Service]
+Type=simple
+PIDFile=/run/php-fpm/php-%i.pid
+Environment=PHP_INI_SCAN_DIR=/usr/syno/etc/packages/WebStation/php_profile/%i/conf.d:/run/php-fpm/conf.d
+ExecStartPre=/var/packages/WebStation/target/tools/webstation_systemd_service_tool.sh pkg-WebStation-php ExecStartPre
+ExecStart=/var/packages/php83/target/package/sbin/php-fpm \
+            -c /var/packages/php83/target/package/etc/php.ini \
+            --fpm-config /usr/syno/etc/packages/WebStation/php_profile/%i/fpm.conf \
+            --allow-to-run-as-root \
+            --nodaemonize \
+            --pid /run/php-fpm/php-%i.pid
+ExecReload=/bin/kill -USR2 $MAINPID
+Restart=on-failure
+Slice=syno_dsm_internal.slice
+
+[Install]
+WantedBy=pkgctl-php83.service pkgctl-WebStation.service
+
+[X-Synology]
+Name=WebStation PHP 8.3 fpm process

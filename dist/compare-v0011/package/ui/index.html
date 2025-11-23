@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PHP 8.3 - Gestionnaire d'Extensions</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            background: #f5f5f5;
+            padding: 20px;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            padding: 30px;
+        }
+        h1 {
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 24px;
+        }
+        .intro {
+            color: #666;
+            margin-bottom: 30px;
+            line-height: 1.6;
+        }
+        .controls {
+            margin-bottom: 30px;
+            display: flex;
+            gap: 10px;
+        }
+        button {
+            padding: 10px 20px;
+            background: #0066cc;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            transition: background 0.2s;
+        }
+        button:hover {
+            background: #0052a3;
+        }
+        button.secondary {
+            background: #6c757d;
+        }
+        button.secondary:hover {
+            background: #5a6268;
+        }
+        button.success {
+            background: #28a745;
+        }
+        button.success:hover {
+            background: #218838;
+        }
+        .category {
+            margin-bottom: 25px;
+            border: 1px solid #e0e0e0;
+            border-radius: 6px;
+            overflow: hidden;
+        }
+        .category-header {
+            background: #f8f9fa;
+            padding: 15px 20px;
+            font-weight: 600;
+            color: #333;
+            border-bottom: 1px solid #e0e0e0;
+        }
+        .category-desc {
+            color: #666;
+            font-weight: normal;
+            font-size: 13px;
+            margin-left: 10px;
+        }
+        .extensions {
+            padding: 15px 20px;
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 10px;
+        }
+        .extension {
+            display: flex;
+            align-items: center;
+            padding: 8px 0;
+        }
+        .extension input[type="checkbox"] {
+            margin-right: 10px;
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+        }
+        .extension input[type="checkbox"]:disabled {
+            cursor: not-allowed;
+            opacity: 0.6;
+        }
+        .extension label {
+            cursor: pointer;
+            font-size: 14px;
+            color: #333;
+            user-select: none;
+        }
+        .extension label.disabled {
+            color: #999;
+            cursor: not-allowed;
+        }
+        .native-badge {
+            background: #17a2b8;
+            color: white;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-size: 11px;
+            margin-left: 6px;
+            font-weight: 500;
+        }
+        .status {
+            padding: 15px 20px;
+            margin-bottom: 20px;
+            border-radius: 6px;
+            display: none;
+        }
+        .status.success {
+            background: #d4edda;
+            border: 1px solid #c3e6cb;
+            color: #155724;
+            display: block;
+        }
+        .status.error {
+            background: #f8d7da;
+            border: 1px solid #f5c6cb;
+            color: #721c24;
+            display: block;
+        }
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 20px;
+            color: #666;
+        }
+        .loading.active {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>PHP 8.3 - Gestionnaire d'Extensions</h1>
+        <p class="intro">
+            Sélectionnez les extensions PHP à activer ou désactiver. Les extensions natives (CLI, Session, Phar)
+            sont toujours activées. Cliquez sur "Enregistrer" pour appliquer les changements.
+        </p>
+
+        <div id="status" class="status"></div>
+
+        <div class="controls">
+            <button onclick="selectAll()">Tout sélectionner</button>
+            <button onclick="deselectAll()" class="secondary">Tout désélectionner</button>
+            <button onclick="saveExtensions()" class="success">💾 Enregistrer</button>
+        </div>
+
+        <div id="loading" class="loading">
+            <p>Chargement des extensions...</p>
+        </div>
+
+        <div id="extensions-container"></div>
+    </div>
+
+    <script>
+        const categories = {
+            core: {
+                title: 'Extensions de base',
+                desc: 'Fonctionnalités essentielles de PHP (recommandé)',
+                extensions: {
+                    cli: { label: 'CLI - Interface en ligne de commande', native: true, enabled: true },
+                    session: { label: 'Session - Gestion des sessions', native: true, enabled: true },
+                    phar: { label: 'Phar - Archive PHP', native: true, enabled: true },
+                    opcache: { label: 'OPcache - Cache de bytecode', native: false, enabled: true },
+                    tokenizer: { label: 'Tokenizer - Analyseur de code PHP', native: false, enabled: true },
+                    filter: { label: 'Filter - Validation des entrées', native: false, enabled: true },
+                    ctype: { label: 'Ctype - Vérification des types', native: false, enabled: true }
+                }
+            },
+            database: {
+                title: 'Extensions de base de données',
+                desc: 'Support MySQL/MariaDB et SQLite',
+                extensions: {
+                    pdo: { label: 'PDO - Couche d\'abstraction', native: false, enabled: true },
+                    pdo_mysql: { label: 'PDO MySQL - Pilote MySQL/MariaDB', native: false, enabled: true },
+                    mysqli: { label: 'MySQLi - Interface MySQL améliorée', native: false, enabled: true },
+                    pdo_sqlite: { label: 'PDO SQLite - Pilote SQLite', native: false, enabled: false }
+                }
+            },
+            network: {
+                title: 'Web et réseau',
+                desc: 'cURL, OpenSSL et fonctions réseau',
+                extensions: {
+                    curl: { label: 'cURL - Client HTTP', native: false, enabled: true },
+                    openssl: { label: 'OpenSSL - Cryptographie SSL/TLS', native: false, enabled: true },
+                    ftp: { label: 'FTP - Client FTP', native: false, enabled: false },
+                    sockets: { label: 'Sockets - Communication réseau bas niveau', native: false, enabled: false }
+                }
+            },
+            images: {
+                title: 'Traitement d\'images',
+                desc: 'Bibliothèque GD avec PNG/JPEG/WebP',
+                extensions: {
+                    gd: { label: 'GD - Manipulation d\'images', native: false, enabled: true },
+                    exif: { label: 'EXIF - Métadonnées d\'images', native: false, enabled: true }
+                }
+            },
+            xml: {
+                title: 'Traitement XML',
+                desc: '',
+                extensions: {
+                    dom: { label: 'DOM - Modèle objet XML', native: false, enabled: true },
+                    xml: { label: 'XML Parser - Analyse XML', native: false, enabled: true },
+                    simplexml: { label: 'SimpleXML - Interface simplifiée', native: false, enabled: true }
+                }
+            },
+            compression: {
+                title: 'Compression et archives',
+                desc: '',
+                extensions: {
+                    zip: { label: 'Zip - Archives ZIP', native: false, enabled: true },
+                    zlib: { label: 'Zlib - Compression gzip', native: false, enabled: true },
+                    bz2: { label: 'BZip2 - Compression bzip2', native: false, enabled: false }
+                }
+            },
+            i18n: {
+                title: 'Internationalisation',
+                desc: '',
+                extensions: {
+                    mbstring: { label: 'Mbstring - Chaînes multioctets', native: false, enabled: true },
+                    intl: { label: 'Intl - Internationalisation (ICU)', native: false, enabled: true },
+                    gettext: { label: 'Gettext - Texte multilingue', native: false, enabled: false },
+                    iconv: { label: 'Iconv - Conversion d\'encodage', native: false, enabled: true }
+                }
+            },
+            advanced: {
+                title: 'Extensions avancées',
+                desc: 'Mathématiques, système et autres',
+                extensions: {
+                    bcmath: { label: 'BCMath - Mathématiques en précision arbitraire', native: false, enabled: false },
+                    gmp: { label: 'GMP - GNU Multiple Precision', native: false, enabled: false },
+                    sodium: { label: 'Sodium - Cryptographie moderne', native: false, enabled: true },
+                    fileinfo: { label: 'Fileinfo - Détection de type de fichier', native: false, enabled: true },
+                    posix: { label: 'POSIX - Fonctions système Unix', native: false, enabled: false },
+                    pcntl: { label: 'PCNTL - Contrôle de processus', native: false, enabled: false }
+                }
+            }
+        };
+
+        // Load current configuration
+        async function loadExtensions() {
+            document.getElementById('loading').classList.add('active');
+            try {
+                const response = await fetch('/extension-api.cgi?method=list');
+                const data = await response.json();
+                if (data.success) {
+                    // Update categories with loaded data
+                    Object.keys(data.data).forEach(ext => {
+                        Object.keys(categories).forEach(cat => {
+                            if (categories[cat].extensions[ext]) {
+                                categories[cat].extensions[ext].enabled = data.data[ext];
+                            }
+                        });
+                    });
+                }
+            } catch (e) {
+                console.log('Using default configuration');
+            }
+            renderExtensions();
+            document.getElementById('loading').classList.remove('active');
+        }
+
+        function renderExtensions() {
+            const container = document.getElementById('extensions-container');
+            container.innerHTML = '';
+
+            Object.keys(categories).forEach(catKey => {
+                const cat = categories[catKey];
+                const catDiv = document.createElement('div');
+                catDiv.className = 'category';
+
+                const header = document.createElement('div');
+                header.className = 'category-header';
+                header.innerHTML = cat.title + (cat.desc ? `<span class="category-desc">${cat.desc}</span>` : '');
+
+                const extsDiv = document.createElement('div');
+                extsDiv.className = 'extensions';
+
+                Object.keys(cat.extensions).forEach(extKey => {
+                    const ext = cat.extensions[extKey];
+                    const extDiv = document.createElement('div');
+                    extDiv.className = 'extension';
+
+                    const checkbox = document.createElement('input');
+                    checkbox.type = 'checkbox';
+                    checkbox.id = `ext_${extKey}`;
+                    checkbox.checked = ext.enabled;
+                    checkbox.disabled = ext.native;
+                    if (!ext.native) {
+                        checkbox.setAttribute('data-ext', extKey);
+                    }
+
+                    const label = document.createElement('label');
+                    label.htmlFor = `ext_${extKey}`;
+                    label.textContent = ext.label;
+                    label.className = ext.native ? 'disabled' : '';
+
+                    if (ext.native) {
+                        const badge = document.createElement('span');
+                        badge.className = 'native-badge';
+                        badge.textContent = 'natif';
+                        label.appendChild(badge);
+                    }
+
+                    extDiv.appendChild(checkbox);
+                    extDiv.appendChild(label);
+                    extsDiv.appendChild(extDiv);
+                });
+
+                catDiv.appendChild(header);
+                catDiv.appendChild(extsDiv);
+                container.appendChild(catDiv);
+            });
+        }
+
+        function selectAll() {
+            document.querySelectorAll('input[type="checkbox"]:not([disabled])').forEach(cb => cb.checked = true);
+        }
+
+        function deselectAll() {
+            document.querySelectorAll('input[type="checkbox"]:not([disabled])').forEach(cb => cb.checked = false);
+        }
+
+        async function saveExtensions() {
+            const extensions = {};
+            document.querySelectorAll('input[type="checkbox"][data-ext]').forEach(cb => {
+                extensions[cb.getAttribute('data-ext')] = cb.checked;
+            });
+
+            const statusDiv = document.getElementById('status');
+            statusDiv.className = 'status';
+            statusDiv.textContent = 'Enregistrement en cours...';
+            statusDiv.style.display = 'block';
+
+            try {
+                const response = await fetch('/extension-api.cgi?method=set', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ extensions })
+                });
+
+                const data = await response.json();
+                if (data.success) {
+                    statusDiv.className = 'status success';
+                    statusDiv.textContent = '✓ Extensions enregistrées avec succès! Redémarrez PHP-FPM pour appliquer les changements.';
+                } else {
+                    throw new Error(data.error?.mesg || 'Erreur inconnue');
+                }
+            } catch (error) {
+                statusDiv.className = 'status error';
+                statusDiv.textContent = `✗ Erreur lors de l'enregistrement: ${error.message}`;
+            }
+
+            setTimeout(() => {
+                statusDiv.style.display = 'none';
+            }, 5000);
+        }
+
+        // Load extensions on page load
+        window.addEventListener('DOMContentLoaded', loadExtensions);
+    </script>
+</body>
+</html>

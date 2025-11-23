@@ -1,0 +1,17 @@
+{
+	"id": "php83",
+	"resource": {
+		"id": 83,
+		"prefix": "php83",
+		"version": 1,
+		"fpm_path": "/var/packages/php83/target/package/sbin/php-fpm",
+		"cgi_path": "/var/packages/php83/target/package/bin/php-cgi",
+		"fpm_syslog_ident": "php83-fpm",
+		"service_template_unit": "pkg-WebStation-php83@",
+		"default_ini": "/var/packages/php83/target/package/etc/php.ini",
+		"default_settings": "/var/packages/php83/target/package/conf/default_settings.json",
+		"extension_list_path": "/var/packages/php83/target/package/conf/extension_list.json"
+	},
+	"type": 1,
+	"version": "8.3.8-0013"
+}

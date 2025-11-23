@@ -1,0 +1,307 @@
+╔══════════════════════════════════════════════════════════════════╗
+║  INSTRUCTIONS D'INSTALLATION PHP 8.3 SUR LE NAS                 ║
+║  Version avec Correctif Web Station Intégré                     ║
+╚══════════════════════════════════════════════════════════════════╝
+
+NAS: ServeurNAS (192.168.1.47:44)
+Utilisateur SSH: gilles
+Package: php83_8.3.8-0001_geminilake.spk (35 MB)
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+ÉTAPE 1: TRANSFÉRER LE PACKAGE SUR LE NAS
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Ouvrez un nouveau terminal Git Bash et exécutez:
+
+    scp -P 44 dist/php83_8.3.8-0001_geminilake.spk gilles@192.168.1.47:/tmp/
+
+Entrez votre mot de passe quand demandé.
+
+✓ Le transfert prend environ 30 secondes (35 MB)
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+ÉTAPE 2: TRANSFÉRER LE SCRIPT DE TEST
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Dans le même terminal:
+
+    scp -P 44 test-nas-complete.sh gilles@192.168.1.47:/tmp/
+
+✓ Transfert rapide (15 KB)
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+ÉTAPE 3: VÉRIFIER L'ÉTAT ACTUEL DU NAS
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Connectez-vous au NAS:
+
+    ssh -p 44 gilles@192.168.1.47
+
+Vérifiez si PHP 8.3 est déjà installé:
+
+    ls -la /var/packages/php83
+
+Si le répertoire existe:
+    ⚠ IMPORTANT: Vous devez désinstaller l'ancienne version AVANT !
+
+    1. Ouvrir DSM dans votre navigateur: http://192.168.1.47:5000
+    2. Centre de paquets → Localiser "PHP 8.3"
+    3. Cliquer sur "Désinstaller"
+    4. Attendre la fin de la désinstallation
+    5. Revenir à ces instructions
+
+Si le répertoire n'existe pas:
+    ✓ Parfait ! Vous pouvez continuer
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+ÉTAPE 4: INSTALLER LE PACKAGE VIA DSM
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+1. Ouvrez votre navigateur
+
+2. Connectez-vous à DSM:
+   http://192.168.1.47:5000
+
+3. Allez dans "Centre de paquets"
+
+4. Cliquez sur "Installation manuelle" (bouton en haut à droite)
+
+5. Cliquez sur "Parcourir"
+
+6. Naviguez vers le fichier sur le NAS:
+   /tmp/php83_8.3.8-0001_geminilake.spk
+
+   Note: Si vous ne voyez pas /tmp, vous pouvez soit:
+   - Utiliser File Station pour déplacer le fichier dans un dossier partagé
+   - Ou continuer avec le chemin /tmp (DSM devrait le trouver)
+
+7. Suivez l'assistant d'installation:
+
+   ┌─────────────────────────────────────────────────────────────┐
+   │ SÉLECTION DES EXTENSIONS PHP                                │
+   ├─────────────────────────────────────────────────────────────┤
+   │                                                             │
+   │ Extensions RECOMMANDÉES (cochez-les):                       │
+   │                                                             │
+   │  ✓ opcache       - Performance (cache bytecode)            │
+   │  ✓ curl          - Client HTTP                             │
+   │  ✓ openssl       - SSL/TLS sécurité                        │
+   │  ✓ mysqli        - Base de données MySQL/MariaDB           │
+   │  ✓ pdo_mysql     - PDO MySQL                               │
+   │  ✓ gd            - Traitement d'images                     │
+   │  ✓ mbstring      - Chaînes multioctets (Unicode)           │
+   │  ✓ xml           - Traitement XML                          │
+   │  ✓ dom           - Document Object Model                   │
+   │  ✓ zip           - Archives ZIP                            │
+   │                                                             │
+   │ Extensions OPTIONNELLES (selon vos besoins):                │
+   │                                                             │
+   │  □ intl          - Internationalisation                    │
+   │  □ fileinfo      - Détection de type de fichier            │
+   │  □ soap          - Services SOAP                           │
+   │  □ pdo_sqlite    - SQLite                                  │
+   │                                                             │
+   └─────────────────────────────────────────────────────────────┘
+
+8. Cliquez sur "Suivant"
+
+9. Acceptez les conditions
+
+10. Cliquez sur "Appliquer"
+
+11. Attendez la fin de l'installation (1-2 minutes)
+
+    ⏳ L'installation va:
+       - Copier les fichiers PHP
+       - Configurer les extensions sélectionnées
+       - Démarrer le service PHP-FPM automatiquement
+       - Enregistrer PHP 8.3 dans Web Station ✨
+
+12. Une fois terminé, vous devriez voir:
+    ✓ "PHP 8.3" installé avec succès
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+ÉTAPE 5: VÉRIFIER L'INSTALLATION
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Retournez dans votre terminal SSH (ou reconnectez-vous):
+
+    ssh -p 44 gilles@192.168.1.47
+
+Donnez les permissions d'exécution au script de test:
+
+    chmod +x /tmp/test-nas-complete.sh
+
+Exécutez les tests complets:
+
+    bash /tmp/test-nas-complete.sh
+
+✓ Le script va vérifier:
+   - Installation du package
+   - Binaires PHP (php, php-fpm)
+   - Extensions chargées
+   - Configuration
+   - Service en cours d'exécution
+   - Logs
+   - Intégration Web Station ⭐
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+ÉTAPE 6: VÉRIFIER WEB STATION
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+C'est la vérification CRITIQUE pour confirmer que le correctif fonctionne !
+
+1. Dans DSM, ouvrez "Web Station"
+
+2. Allez dans "Paramètres PHP" (ou "PHP Settings")
+
+3. Vérifiez la liste des profils PHP disponibles
+
+   ✅ VOUS DEVEZ VOIR: "PHP 8.3" dans la liste
+
+   Si vous le voyez:
+   🎉 SUCCÈS ! Le correctif Web Station fonctionne !
+
+   Si vous ne le voyez pas:
+   ⚠ Problème - Exécutez dans le terminal SSH:
+
+   cat /usr/syno/etc/www/app.d/backend-php83.json
+
+   Le fichier doit exister. Si non, contactez-moi.
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+ÉTAPE 7: CRÉER UN SITE DE TEST
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+1. Dans Web Station, cliquez sur "Portail Web" → "Créer"
+
+2. Configurez:
+   - Type: Hôte virtuel basé sur le port
+   - Nom: test-php83
+   - Port HTTP: 8088 (ou un autre port libre)
+   - Dossier racine: /volume1/web/test-php83
+   - ⭐ Backend server: Sélectionnez "PHP 8.3"
+
+3. Cliquez sur "OK"
+
+4. Créez un fichier de test (dans le terminal SSH):
+
+   sudo mkdir -p /volume1/web/test-php83
+   sudo tee /volume1/web/test-php83/index.php << 'EOF'
+   <?php
+   phpinfo();
+   ?>
+   EOF
+   sudo chown -R http:http /volume1/web/test-php83
+
+5. Ouvrez dans votre navigateur:
+   http://192.168.1.47:8088/
+
+   ✅ Vous devez voir:
+   - PHP Version 8.3.8
+   - Server API: FPM/FastCGI
+   - Configuration File: /var/packages/php83/target/conf/php.ini
+   - Liste des extensions chargées
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+ÉTAPE 8: TESTER LE PANNEAU DE CONFIGURATION
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+1. Dans DSM, allez dans "Centre de paquets"
+
+2. Localisez "PHP 8.3"
+
+3. Cliquez sur le bouton "Ouvrir"
+
+   ✅ L'interface de gestion des extensions devrait s'ouvrir
+
+4. Testez:
+   - Activer/désactiver une extension
+   - Sauvegarder
+   - Redémarrer le service
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+NETTOYAGE (OPTIONNEL)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Une fois tout validé, vous pouvez supprimer les fichiers temporaires:
+
+    ssh -p 44 gilles@192.168.1.47
+    rm -f /tmp/php83_8.3.8-0001_geminilake.spk
+    rm -f /tmp/test-nas-complete.sh
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+RÉSUMÉ DES VÉRIFICATIONS
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+✓ Package installé sans erreur
+✓ Service PHP-FPM démarré automatiquement
+✓ Binaires PHP fonctionnels (php -v)
+✓ Extensions chargées correctement
+✓ Fichier /usr/syno/etc/www/app.d/backend-php83.json existe
+✓ PHP 8.3 visible dans Web Station ⭐ CRITIQUE
+✓ Site de test créé et fonctionnel
+✓ Page phpinfo() affiche PHP 8.3.8
+✓ Panneau de configuration accessible
+✓ Aucune erreur dans les logs
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+EN CAS DE PROBLÈME
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+PHP 8.3 n'apparaît pas dans Web Station:
+
+    1. Vérifier le fichier backend:
+       ssh -p 44 gilles@192.168.1.47
+       ls -la /usr/syno/etc/www/app.d/backend-php83.json
+       cat /usr/syno/etc/www/app.d/backend-php83.json
+
+    2. Redémarrer Web Station:
+       sudo synopkg restart WebStation
+
+    3. Vérifier les logs:
+       tail -50 /var/log/php83-install.log
+
+
+Le service ne démarre pas:
+
+    tail -100 /var/packages/php83/var/log/php-fpm.log
+    sudo synoservicectl --start pkgctl-php83
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+SUCCÈS !
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Si PHP 8.3 apparaît dans Web Station, le correctif fonctionne parfaitement !
+
+Vous pouvez maintenant utiliser PHP 8.3 pour tous vos sites web.
+
+🎉 Installation terminée avec succès !
+
+
+╔══════════════════════════════════════════════════════════════════╗
+║  Besoin d'aide ? Consultez SOLUTION_WEBSTATION.md               ║
+╚══════════════════════════════════════════════════════════════════╝

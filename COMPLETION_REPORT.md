@@ -8,7 +8,7 @@
 
 ## Executive Summary
 
-This project successfully delivers a **complete Synology Package (SPK) structure** for PHP 8.3.8 with advanced extension management capabilities. The package is ready for production use once PHP binaries are compiled using the spksrc toolchain.
+This project successfully delivers a **complete Synology Package (SPK) structure** for PHP 8.3.28 with advanced extension management capabilities. The package is ready for production use once PHP binaries are compiled using the spksrc toolchain.
 
 ### Key Achievement
 We have created a **fully functional package framework** that allows Synology administrators to:
@@ -93,7 +93,7 @@ php8.3/
 
 ```yaml
 Package Name: php83
-Version: 8.3.8-0001
+Version: 8.3.28-0001
 Architecture: geminilake (x86_64)
 DSM Version: 7.2+ (64-bit)
 Size (structure): 20 KB
@@ -163,14 +163,14 @@ UI: ExtJS panel
 1. **Build the SPK structure**
    ```bash
    bash scripts/build-spk.sh
-   # Output: dist/php83_8.3.8-0001_geminilake.spk
+   # Output: dist/php83_8.3.28-0001_geminilake.spk
    ```
 
 2. **Download PHP sources**
    ```bash
    cd spk/php83
-   bash scripts/download-php-source.sh 8.3.8 files/php-src
-   # Creates: files/php-src/php-8.3.8.tar.gz (verified SHA-256)
+   bash scripts/download-php-source.sh 8.3.28 files/php-src
+   # Creates: files/php-src/php-8.3.28.tar.gz (verified SHA-256)
    ```
 
 3. **Review documentation**
@@ -180,7 +180,7 @@ UI: ExtJS panel
 
 4. **Inspect package contents**
    ```bash
-   tar tf dist/php83_8.3.8-0001_geminilake.spk
+   tar tf dist/php83_8.3.28-0001_geminilake.spk
    # Shows: INFO, package.tgz, scripts.tgz, wizard, icons
    ```
 
@@ -216,9 +216,9 @@ bash scripts/build-spk.sh
 **Time**: 2-4 hours (first build with toolchain download)
 
 #### Option B: Use Pre-Built Binaries
-If you have access to pre-compiled PHP 8.3.8 binaries for Geminilake:
+If you have access to pre-compiled PHP 8.3.28 binaries for Geminilake:
 ```bash
-tar xzf php-8.3.8-geminilake-prebuilt.tar.gz -C spk/php83/files/
+tar xzf php-8.3.28-geminilake-prebuilt.tar.gz -C spk/php83/files/
 bash scripts/build-spk.sh
 ```
 
@@ -376,7 +376,7 @@ cd spk/php83 && bash scripts/download-php-source.sh
 cat dist/BUILD_INFO.txt
 
 # Inspect SPK
-tar tzf dist/php83_8.3.8-0001_geminilake.spk
+tar tzf dist/php83_8.3.28-0001_geminilake.spk
 ```
 
 ### File Locations (After Install)
@@ -421,7 +421,7 @@ This project follows the **structure-first** principle:
 
 ## Conclusion
 
-The PHP 8.3 Synology Package project is **95% complete**. All design, implementation, documentation, and tooling are finished. The only remaining step is compiling PHP 8.3.8 binaries for the Geminilake architecture, which is:
+The PHP 8.3 Synology Package project is **95% complete**. All design, implementation, documentation, and tooling are finished. The only remaining step is compiling PHP 8.3.28 binaries for the Geminilake architecture, which is:
 
 - ✅ Fully documented in `docs/COMPILATION.md`
 - ✅ Repeatable via spksrc toolchain

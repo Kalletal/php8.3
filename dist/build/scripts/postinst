@@ -115,7 +115,7 @@ try:
                 "extension_list_path": "/var/packages/php83/target/package/conf/extension_list.json"
             },
             "type": 1,
-            "version": "8.3.8-0012"
+            "version": "8.3.28-"
         }
 
         plugin_data["packages"].append(new_package)

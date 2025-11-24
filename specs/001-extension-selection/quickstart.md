@@ -14,14 +14,14 @@
 cd /path/to/spksrc
 make setup
 cd spk/php83
-./scripts/download-php-source.sh 8.3.8      # caches php-8.3.8.tar.gz with SHA-256 verification
+./scripts/download-php-source.sh 8.3.28      # caches php-8.3.28.tar.gz with SHA-256 verification
 make arch-geminilake-7.2
 ```
 
 1. Update `spk/php83/Makefile` with the `EXTENSION_OPTIONS` manifest plus wizard file references.  
 2. Place installer wizard assets under `spk/php83/src/install-wizard/` and Control Panel assets under `src/config-panel/`.  
 3. Provide default config template at `spk/php83/files/conf/extension_selection.json.sample`.  
-4. Confirm that `files/php-src/php-8.3.8.tar.gz` exists; it will be copied to `/var/packages/php83/source/php-8.3.8.tar.gz` at install time.
+4. Confirm that `files/php-src/php-8.3.28.tar.gz` exists; it will be copied to `/var/packages/php83/source/php-8.3.28.tar.gz` at install time.
 
 ## Deploy to DSM
 
@@ -40,7 +40,7 @@ ssh admin@nas 'synopkg install /tmp/php83_geminilake-7.2_*.spk'
 3. Review `/var/log/php83-extension-selection.log` for audit entries produced by `log-extension-event.sh`.  
 4. Trigger low-disk or dependency-conflict scenarios to ensure the wizard and DSM panel warnings prevent unsafe operations.  
 5. Run `tests/integration/extension-selection/install-wizard.sh` and `tests/integration/extension-selection/config-panel.sh` against a DS920+ to automate regression checks.
-6. Validate that `/var/packages/php83/source/php-8.3.8.tar.gz` exists on the NAS (ensuring the source bundle shipped with the package).
+6. Validate that `/var/packages/php83/source/php-8.3.28.tar.gz` exists on the NAS (ensuring the source bundle shipped with the package).
 
 ## Troubleshooting
 

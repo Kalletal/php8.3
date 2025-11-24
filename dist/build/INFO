@@ -1,6 +1,6 @@
 package="php83"
-version="8.3.8-0012"
-description="PHP 8.3.8 with FPM and CLI"
+version="8.3.28-0027"
+description="PHP 8.3.28 with FPM and CLI"
 arch="geminilake"
 os_min_ver="7.0-40000"
 maintainer="Gilles"

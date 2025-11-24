@@ -1,6 +1,6 @@
 # PHP 8.3 Compilation Guide for Synology Geminilake
 
-This guide explains how to cross-compile PHP 8.3.8 for Synology DS920+ (Geminilake architecture) using the spksrc toolchain.
+This guide explains how to cross-compile PHP 8.3.28 for Synology DS920+ (Geminilake architecture) using the spksrc toolchain.
 
 ## Prerequisites
 
@@ -74,7 +74,7 @@ Create `cross/php83/Makefile`:
 
 ```makefile
 PKG_NAME = php
-PKG_VERS = 8.3.8
+PKG_VERS = 8.3.28
 PKG_EXT = tar.gz
 PKG_DIST_NAME = $(PKG_NAME)-$(PKG_VERS).$(PKG_EXT)
 PKG_DIST_SITE = https://www.php.net/distributions
@@ -108,7 +108,7 @@ cd ~/spksrc
 make arch-geminilake-7.2 php83
 
 # This will:
-# 1. Download PHP 8.3.8 source
+# 1. Download PHP 8.3.28 source
 # 2. Cross-compile for Geminilake
 # 3. Build all dependencies
 # 4. Install to build/php83/install/
@@ -188,8 +188,8 @@ You need to cross-compile these first:
 
 ```bash
 cd spk/php83/vendor
-tar xzf php-8.3.8.tar.gz
-cd php-8.3.8
+tar xzf php-8.3.28.tar.gz
+cd php-8.3.28
 
 ./configure \
     --host=x86_64-pc-linux-gnu \
@@ -247,7 +247,7 @@ ldd files/bin/php
 
 # Test execution (on target or emulator)
 ./files/bin/php -v
-# Should print: PHP 8.3.8 ...
+# Should print: PHP 8.3.28 ...
 
 ./files/bin/php -m
 # Should list compiled-in modules

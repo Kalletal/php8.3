@@ -303,7 +303,7 @@ Every extension state change is logged:
 
 #### SPK Structure
 ```
-php83_8.3.8-0001_geminilake.spk (tar archive)
+php83_8.3.28-0019_geminilake.spk (tar archive)
 ├── INFO                          # Package metadata
 ├── package.tgz                   # Main payload
 │   ├── bin/                      # PHP binaries
@@ -341,7 +341,7 @@ scripts/build-spk.sh
 6. Create WIZARD_UIFILES.tgz
 7. Combine into final SPK (tar)
     ↓
-Output: dist/php83_8.3.8-0001_geminilake.spk
+Output: dist/php83_8.3.28-0019_geminilake.spk
 ```
 
 ## Design Decisions

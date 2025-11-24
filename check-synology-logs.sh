@@ -42,4 +42,4 @@ echo
 
 echo "10. Tenter d'installer et capturer l'erreur :"
 echo "Copiez le fichier SPK sur le NAS et exécutez :"
-echo "sudo synopkg install /chemin/vers/php83_8.3.8-0001_geminilake.spk"
+echo "sudo synopkg install /chemin/vers/php83_8.3.28-0001_geminilake.spk"

@@ -172,6 +172,12 @@
           "required": false,
           "enabled_by_default": true
         },
+        "bz2": {
+          "name": "Bzip2",
+          "description": "Bzip2 compression",
+          "required": false,
+          "enabled_by_default": false
+        },
         "phar": {
           "name": "Phar",
           "description": "PHP Archive support",
@@ -267,6 +273,18 @@
           "description": "GNU gettext internationalization",
           "required": false,
           "enabled_by_default": false
+        },
+        "iconv": {
+          "name": "Iconv",
+          "description": "Character encoding conversion",
+          "required": false,
+          "enabled_by_default": true
+        },
+        "intl": {
+          "name": "Intl",
+          "description": "Internationalization extension (ICU)",
+          "required": false,
+          "enabled_by_default": true
         },
         "calendar": {
           "name": "Calendar",
